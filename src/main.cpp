@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include <processors/circular_buffer.h>
+
+CircularBuffer<float> circular = CircularBuffer<float>(10);
 
 void setup() {
   // put your setup code here, to run once:
