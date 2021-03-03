@@ -2,37 +2,7 @@
 #define SENSOR_H
 
 #include <Arduino.h>
-
-template<class T>
-class Read {
-    public:
-        Read();
-        Read(T value, uint8_t source);
-        uint8_t getSource();
-        T getValue();
-    private:
-        T value;
-        uint8_t source;
-};
-
-template<class T>
-Read<T>::Read(T value, uint8_t source) {
-    this->value = value;
-    this->source = source;
-}
-
-template<class T>
-Read<T>::Read() {}
-
-template<class T>
-T Read<T>::getValue() {
-    return this->value;
-}
-
-template<class T>
-uint8_t Read<T>::getSource() {
-    return this->source;
-}
+#include <sensors/read.h>
 
 template<class T>
 class SensorABC {
@@ -76,6 +46,7 @@ void SensorABC<T>::excecute(){
     T new_value = this->read();
     if(new_value != this->raw_value){
         this->changed = true;
+        this->raw_value = new_value;
         this->value = Read<T>(new_value, this->id);
     }
 }

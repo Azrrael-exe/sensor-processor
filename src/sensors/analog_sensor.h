@@ -7,7 +7,7 @@
 
 class AnalogSensor : public SensorABC<int> {
     public:
-        AnalogSensor(uint8_t id, uint8_t pin):SensorABC(id) {
+        AnalogSensor(uint8_t id, uint8_t pin):SensorABC<int>(id) {
             this->pin = pin;
         };
     private:
