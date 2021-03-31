@@ -2,20 +2,20 @@
 #define SENSOR_H
 
 #include <Arduino.h>
-#include <sensors/read.h>
+#include <entities/value.h>
 
 template<class T>
 class SensorABC {
     public:
         SensorABC(uint8_t id);
         bool hasChanged();
-        Read<T> getValue();
+        ValueABC<T> getValue();
         uint8_t getId();
         void excecute();
     private:
         bool changed;
         T raw_value;
-        Read<T> value;
+        ValueABC<T> value;
         uint8_t id;
         virtual T read();
 };
@@ -26,7 +26,7 @@ SensorABC<T>::SensorABC(uint8_t id){
 }
 
 template<class T>
-Read<T> SensorABC<T>::getValue(){
+ValueABC<T> SensorABC<T>::getValue(){
     this->changed = false;
     return this->value;
 }
@@ -47,7 +47,7 @@ void SensorABC<T>::excecute(){
     if(new_value != this->raw_value){
         this->changed = true;
         this->raw_value = new_value;
-        this->value = Read<T>(new_value, this->id);
+        this->value = ValueABC<T>(new_value, this->id);
     }
 }
 

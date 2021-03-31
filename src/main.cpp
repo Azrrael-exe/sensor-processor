@@ -6,10 +6,15 @@
 
 #include <sensors/analog_sensor.h>
 #include <sensors/digital_sensor.h>
+#include <sensors/temperature/lm35.h>
+#include <actuator/pump.h>
+#include <actuator/led.h>
 
 CircularBuffer<int> circular = CircularBuffer<int>(10);
-AnalogSensor sensor = AnalogSensor(0x7E, A0);
-DigitalSensor dsensor = DigitalSensor(0x7F, 4);
+AnalogSensor level_sensor = AnalogSensor(0x7A, A3);
+Pump pump = Pump(0xAB, 7);
+Led led = Led(0xAC, 13);
+
 
 void setup() {
   Serial.begin(115200);
@@ -18,19 +23,15 @@ void setup() {
 }
 
 void loop() {
-  
-  sensor.excecute();
-  dsensor.excecute();
-  if(sensor.hasChanged() && dsensor.hasChanged()){
-    int raw_read = sensor.getValue().getValue();
-    int scaled_read = scaler<int>(raw_read, 1.0);
-    int processed_read = truncate<int>(scaled_read, 1023, 0);
-    circular.append(raw_read);
-    int mean = circular.mean();
+  level_sensor.excecute();
+  if(level_sensor.hasChanged()){
+    ValueABC<float> value = level_sensor.getValue();
 
-    valuePrinter(Serial, mean, "Mean Value");
-    valuePrinter(Serial, processed_read, "Proc Value");
+    // PID: Va aquí;
+
+    pump.setValue(value);
+    led.setValue(value);
   }
-
-  delay(500);
+  pump.excecute();
+  led.excecute();
 }
